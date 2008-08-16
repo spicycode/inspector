@@ -4,63 +4,74 @@ require 'ruby2ruby'
 
 module TheInspector
 
-  def _trace_the_method_call(settings = {}, &block)
+  def _collect_events_for_method_call(settings = {}, &block)
     settings[:debug] ||= false
-    settings[:educated_guess] ||= false
     
     events = []
     
     set_trace_func lambda { |event, file, line, id, binding, classname|
       events << { :event => event, :file => file, :line => line, :id => id, :binding => binding, :classname => classname }
-      
-      if settings[:debug]
-        puts "event => #{event}"
-        puts "file => #{file}"
-        puts "line => #{line}"
-        puts "id => #{id}"
-        puts "binding => #{binding}"
-        puts "classname => #{classname}"
-        puts ''
-      end
     }
-    yield
-    set_trace_func(nil)
-
-    events.each do |event|
-      # TODO: c-call, c-return are the stdlib c return/calls we should handle em'
-      next unless event[:event] == 'call' || (event[:event] == 'return' && event[:classname].included_modules.include?(ActiveRecord::Associations))
-      return event
+    
+    begin
+      yield
+    ensure
+      set_trace_func(nil)
     end
-    
-    # def self.crazy_custom_finder
-    #  return find(:all......)
-    # end
-    # return unless event == 'call' or (event == 'return' and classname.included_modules.include?(ActiveRecord::Associations))
-    # which_file = "Line \##{line} of #{file}"
-    # TODO: Document, test if still needed
-    return events[-3] if settings[:educated_guess] && events.size > 3
-    
-    nil
+
+    events
   end
 
-  # Original version from http://holgerkohnen.blogspot.com/
-  # which { some_object.some_method() } => <file>:<line>:
+  def _trace_the_method_call(settings={}, &block)
+    events = _collect_events_for_method_call settings, &block
+
+    events.each do |event|
+      next unless %w{call c-call return}.include?(event[:event])
+
+      case event[:classname]
+        when ::ActiveRecord::Base
+          return events[-3]
+        else
+          return event if event[:event] == 'call' 
+      end
+    end
+
+  end
+
+# Original version from http://holgerkohnen.blogspot.com/
+# which { some_object.some_method() } => <file>:<line>:
   def where_is_this_defined(settings={}, &block)
-    settings[:debug] ||= false
-    settings[:educated_guess] ||= false
-   
     event = _trace_the_method_call(settings, &block)
 
     if event
-      "#{event[:classname]} received message '#{event[:id]}', Line \##{event[:line]} of #{event[:file]}"
+      # TODO: If the file is (irb) or event[:event] is c-call note it differently in the output
+      "#{event[:classname]} received message '#{event[:id]}', Line \##{event[:line]} of #{(event[:event] == 'c-call') ? 'the Ruby Standard Library' : event[:file]}"
     else
-      'Unable to determine where method was defined.'
+      "Unable to determine where the method was defined"
     end
   end
   alias :where_is_this_defined? :where_is_this_defined
 
-  def how_is_this_defined
-    RubyToRuby.translate(String, :blank?)
+  def how_is_this_defined(settings={}, &block)
+    begin
+      event = _trace_the_method_call(settings, &block)
+
+      if event
+        if event[:classname] == ActiveRecord::Base
+          "Sorry, Ruby2Ruby can't peak under the hood in ActiveRecord::Base (modules + classes == fail in ruby2ruby)"
+        else
+          RubyToRuby.translate(event[:classname], event[:id])
+        end
+      else
+        "Unable to determine where the method was defined in order to get to it's source"
+      end
+
+    rescue NoMethodError => nme
+      if nme.message =~ /^undefined method \`(.*)\' for nil\:NilClass/
+        return "Unable to get the souce for #{event[:classname]}.#{event[:id]} because it is a function defined in C"
+      end 
+      raise
+    end
   end
   alias :how_is_this_defined? :how_is_this_defined
 
