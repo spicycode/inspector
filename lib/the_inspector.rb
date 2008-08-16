@@ -57,7 +57,7 @@ module TheInspector
       event = _trace_the_method_call(settings, &block)
 
       if event
-        if event[:classname] == ActiveRecord::Base
+        if event[:classname].to_s == 'ActiveRecord::Base'
           "Sorry, Ruby2Ruby can't peak under the hood in ActiveRecord::Base (modules + classes == fail in ruby2ruby)"
         else
           RubyToRuby.translate(event[:classname], event[:id])

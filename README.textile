@@ -1,0 +1,5 @@
+h1. The Inspector can answer: Who, When, Where, Why, and How?
+
+All this and more can be yours if you install the *Inspector*
+
+
