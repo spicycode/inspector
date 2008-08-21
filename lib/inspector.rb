@@ -2,7 +2,7 @@ require 'fileutils'
 require 'rubygems'
 require 'ruby2ruby'
 
-module TheInspector
+module Inspector
 
   def _collect_events_for_method_call(settings = {}, &block)
     settings[:debug] ||= false
@@ -58,7 +58,7 @@ module TheInspector
 
       if event
         if event[:classname].to_s == 'ActiveRecord::Base'
-          "Sorry, Ruby2Ruby can't peak under the hood in ActiveRecord::Base (modules + classes == fail in ruby2ruby)"
+          "Sorry, Ruby2Ruby can't peek under the hood in ActiveRecord::Base (modules + classes == fail in ruby2ruby)"
         else
           RubyToRuby.translate(event[:classname], event[:id])
         end
@@ -78,6 +78,6 @@ module TheInspector
 end
 
 Kernel.class_eval do
-  extend TheInspector
+  extend Inspector
 end
 

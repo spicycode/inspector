@@ -1,7 +1,7 @@
-PKG_FILES = ["MIT-LICENSE", "Rakefile", "README.textile", "lib/the_inspector.rb", "lib/version.rb", "doc/jamis.rb"]
+PKG_FILES = ["MIT-LICENSE", "Rakefile", "README.textile", "lib/inspector.rb", "lib/version.rb", "doc/jamis.rb"]
 
 Gem::Specification.new do |s|
-  s.name = 'the_inspector'
+  s.name = 'inspector'
   s.version = "0.1.0"
   s.summary = 'The Inspector'
   s.description = " "
