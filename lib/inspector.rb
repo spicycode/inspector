@@ -2,9 +2,9 @@ require 'fileutils'
 require 'rubygems'
 require 'ruby2ruby'
 
-module Inspector
+class Inspector
 
-  def _collect_events_for_method_call(settings = {}, &block)
+  def self._collect_events_for_method_call(settings = {}, &block)
     settings[:debug] ||= false
     
     events = []
@@ -22,17 +22,17 @@ module Inspector
     events
   end
 
-  def _trace_the_method_call(settings={}, &block)
+  def self._trace_the_method_call(settings={}, &block)
     events = _collect_events_for_method_call settings, &block
+    events.reject! { |event| !%w{call c-call return}.include?(event[:event]) }
 
     events.each do |event|
-      next unless %w{call c-call return}.include?(event[:event])
 
-      case event[:classname]
-        when ::ActiveRecord::Base
+      case event[:classname].to_s
+        when 'ActiveRecord::Base'
           return events[-3]
         else
-          return event if event[:event] == 'call' 
+          return event if event[:event].include?('call')
       end
     end
 
@@ -40,7 +40,7 @@ module Inspector
 
 # Original version from http://holgerkohnen.blogspot.com/
 # which { some_object.some_method() } => <file>:<line>:
-  def where_is_this_defined(settings={}, &block)
+  def self.where_is_this_defined(settings={}, &block)
     event = _trace_the_method_call(settings, &block)
 
     if event
@@ -50,9 +50,8 @@ module Inspector
       "Unable to determine where the method was defined"
     end
   end
-  alias :where_is_this_defined? :where_is_this_defined
 
-  def how_is_this_defined(settings={}, &block)
+  def self.how_is_this_defined(settings={}, &block)
     begin
       event = _trace_the_method_call(settings, &block)
 
@@ -73,11 +72,6 @@ module Inspector
       raise
     end
   end
-  alias :how_is_this_defined? :how_is_this_defined
 
-end
-
-Kernel.class_eval do
-  extend Inspector
 end
 
