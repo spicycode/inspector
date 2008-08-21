@@ -38,6 +38,7 @@ describe Inspector do
       end
 
     end
+
   end
 
   describe "why was this defined?" do
@@ -53,6 +54,14 @@ describe Inspector do
     end
 
     it "returns the source code by using Ruby2Ruby to generate it"
+
+    describe "when asking about a standard library method" do
+
+      it "returns a friendly sorry, but we can't help you message" do
+        Inspector.how_is_this_defined { 'asdf'.reverse }.should == "Unable to get the source for String.reverse because it is a function defined in C"
+      end
+
+    end
 
   end
 

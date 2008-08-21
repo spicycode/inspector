@@ -67,7 +67,7 @@ class Inspector
 
     rescue NoMethodError => nme
       if nme.message =~ /^undefined method \`(.*)\' for nil\:NilClass/
-        return "Unable to get the souce for #{event[:classname]}.#{event[:id]} because it is a function defined in C"
+        return "Unable to get the source for #{event[:classname]}.#{event[:id]} because it is a function defined in C"
       end 
       raise
     end
