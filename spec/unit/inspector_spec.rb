@@ -63,6 +63,21 @@ describe Inspector do
 
     end
 
+    describe "when asking asking about Foo.cls_method's source" do
+      class Foo
+        def self.cls_method
+          "asdf"
+        end
+      end
+
+      it "returns the source all on one line" do
+        pending("Failing because of ???") do
+          Inspector.how_is_this_defined { Foo.cls_method }.should == "def self.cls_method\n\"asdf\"\nend"
+        end
+      end
+
+    end
+
   end
 
   describe "when was this defined?" do

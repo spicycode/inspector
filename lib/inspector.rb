@@ -64,7 +64,8 @@ class Inspector
       else
         "Unable to determine where the method was defined in order to get to it's source"
       end
-
+    rescue RuntimeError => rte
+      return "I have no idea.  Your codes be the fuzziest.  #{rte.inspect}"
     rescue NoMethodError => nme
       if nme.message =~ /^undefined method \`(.*)\' for nil\:NilClass/
         return "Unable to get the source for #{event[:classname]}.#{event[:id]} because it is a function defined in C"
