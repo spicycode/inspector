@@ -58,11 +58,7 @@ class Inspector
       event = _trace_the_method_call(&block)
 
       if event
-        if event[:classname].to_s == 'ActiveRecord::Base'
-          "Sorry, Ruby2Ruby can't peek under the hood in ActiveRecord::Base (modules + classes == fail in ruby2ruby)"
-        else
-          RubyToRuby.translate(event[:classname], event[:id])
-        end
+        RubyToRuby.translate(event[:classname], event[:id])
       else
         "Unable to determine where the method was defined in order to get to it's source"
       end
@@ -74,6 +70,11 @@ class Inspector
         return "Unable to get the source for #{event[:classname]}.#{event[:id]} because it is a function defined in C"
       end 
       raise
+    rescue Exception => ex
+      if event[:classname].to_s == 'ActiveRecord::Base'
+        return "Sorry, Ruby2Ruby can't peek under the hood in ActiveRecord::Base (modules + classes == fail in ruby2ruby)"
+      end
+      raise
     end
   end
   
@@ -81,7 +82,7 @@ class Inspector
     where = where_is_this_defined(&block)
     how = how_is_this_defined(&block)
     
-    "Sir, here are the details of your inquiry:\nThe method in question was found to be defined in:\n#{where}Also, it was found to look like the following on the inside:\n#{how}"
+    "Sir, here are the details of your inquiry:\n\nThe method in question was found to be defined in:\n#{where}\n\nAlso, it was found to look like the following on the inside:\n#{how}\n\n"
   end
 
 end
