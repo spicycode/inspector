@@ -4,9 +4,8 @@ require 'ruby2ruby'
 
 class Inspector
 
-  def self._collect_events_for_method_call(settings = {}, &block)
-    settings[:debug] ||= false
-    
+  def self._collect_events_for_method_call(&block)
+  
     events = []
     
     set_trace_func lambda { |event, file, line, id, binding, classname|
@@ -22,12 +21,15 @@ class Inspector
     events
   end
 
-  def self._trace_the_method_call(settings={}, &block)
-    events = _collect_events_for_method_call settings, &block
-    events.reject! { |event| !%w{call c-call return}.include?(event[:event]) }
-
+  def self._trace_the_method_call(&block)
+    events = _collect_events_for_method_call &block
+    
+    # events.reject! { |event| !%w{call c-call return}.include?(event[:event]) }
+    valid_event_types = ['call', 'c-call', 'return']
+    
     events.each do |event|
-
+      next unless valid_event_types.include?(event[:event])
+      
       case event[:classname].to_s
         when 'ActiveRecord::Base'
           return events[-3]
@@ -40,8 +42,8 @@ class Inspector
 
 # Original version from http://holgerkohnen.blogspot.com/
 # which { some_object.some_method() } => <file>:<line>:
-  def self.where_is_this_defined(settings={}, &block)
-    event = _trace_the_method_call(settings, &block)
+  def self.where_is_this_defined(&block)
+    event = _trace_the_method_call(&block)
 
     if event
       # TODO: If the file is (irb) or event[:event] is c-call note it differently in the output
@@ -51,9 +53,9 @@ class Inspector
     end
   end
 
-  def self.how_is_this_defined(settings={}, &block)
+  def self.how_is_this_defined(&block)
     begin
-      event = _trace_the_method_call(settings, &block)
+      event = _trace_the_method_call(&block)
 
       if event
         if event[:classname].to_s == 'ActiveRecord::Base'
@@ -65,13 +67,21 @@ class Inspector
         "Unable to determine where the method was defined in order to get to it's source"
       end
     rescue RuntimeError => rte
-      return "I have no idea.  Your codes be the fuzziest.  #{rte.inspect}"
+      # Assuming class level method
+      return RubyToRuby.translate(event[:classname], "self.#{event[:id]}")
     rescue NoMethodError => nme
       if nme.message =~ /^undefined method \`(.*)\' for nil\:NilClass/
         return "Unable to get the source for #{event[:classname]}.#{event[:id]} because it is a function defined in C"
       end 
       raise
     end
+  end
+  
+  def self.detector(&block)
+    where = where_is_this_defined(&block)
+    how = how_is_this_defined(&block)
+    
+    "Sir, here are the details of your inquiry:\nThe method in question was found to be defined in:\n#{where}Also, it was found to look like the following on the inside:\n#{how}"
   end
 
 end
