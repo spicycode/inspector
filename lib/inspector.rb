@@ -78,6 +78,13 @@ class Inspector
     end
   end
   
+  def self.who_defined_it(&block)
+    event = _trace_the_method_call(&block)
+  
+    
+    # git log -S'def self.where_is_this_defined' --pretty=format:%an
+  end
+  
   def self.detector(&block)
     where = where_is_this_defined(&block)
     how = how_is_this_defined(&block)
