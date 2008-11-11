@@ -58,13 +58,13 @@ class Inspector
       event = _trace_the_method_call(&block)
 
       if event
-        RubyToRuby.translate(event[:classname], event[:id])
+        ::RubyToRuby.translate(event[:classname], event[:id])
       else
         "Unable to determine where the method was defined in order to get to it's source"
       end
     rescue RuntimeError => rte
       # Assuming class level method
-      return RubyToRuby.translate(event[:classname], "self.#{event[:id]}")
+      return ::RubyToRuby.translate(event[:classname], "self.#{event[:id]}")
     rescue NoMethodError => nme
       if nme.message =~ /^undefined method \`(.*)\' for nil\:NilClass/
         return "Unable to get the source for #{event[:classname]}.#{event[:id]} because it is a function defined in C"
