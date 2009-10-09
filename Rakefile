@@ -29,9 +29,8 @@ Spec::Rake::SpecTask.new(:rcov) do |spec|
   spec.rcov = true
 end
 
-task :spec => :check_dependencies
-
-task :default => :spec
+task :release => 'gemcutter:release'
+task :default => [:check_dependencies, :spec]
 
 begin
   %w{sdoc sdoc-helpers rdiscount}.each { |name| gem name }
