@@ -11,6 +11,8 @@ begin
     gem.homepage = "http://github.com/spicycode/inspector"
     gem.authors = ["Chad Humphries"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
+    gem.add_development_dependency "sdoc", ">= 0.2.14"
+    gem.add_development_dependency "sdoc-helpers", ">= 0.1.2"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
