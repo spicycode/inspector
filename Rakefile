@@ -1,42 +1,48 @@
-# Copyright 2008 Chad Humphries
-# All rights reserved
- 
-# This file may be distributed under an MIT style license.
-# See MIT-LICENSE for details.
- 
+require 'rubygems'
+require 'rake'
+
 begin
-  require 'rubygems'
-  require 'rake/gempackagetask'
-  require 'rake/testtask'
-  require 'spec/rake/spectask'
-rescue Exception
-  nil
-end
- 
-CURRENT_VERSION = '0.1.0'
-$package_version = CURRENT_VERSION
- 
-PKG_FILES = FileList['[A-Z]*',
-'lib/**/*.rb',
-'doc/**/*'
-]
- 
-if !defined?(Spec)
-  puts "spec and cruise targets require RSpec"
-else
-  desc "Run all examples with RCov"
-  Spec::Rake::SpecTask.new('cruise') do |t|
-    t.spec_files = FileList['spec/**/*.rb']
-    t.rcov = true
-    t.rcov_opts = ['--exclude', 'spec', '--exclude', 'Library']
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name = "inspector"
+    gem.summary = %Q{Where is what defined now?}
+    gem.description = %Q{If you have method, yo I'll find it.}
+    gem.email = "chad.humphries@gmail.com"
+    gem.homepage = "http://github.com/spicycode/inspector"
+    gem.authors = ["Chad Humphries"]
+    gem.add_development_dependency "rspec", ">= 1.2.9"
   end
- 
-  desc "Run all examples"
-  Spec::Rake::SpecTask.new('spec') do |t|
-    t.spec_files = FileList['spec/**/*.rb']
-    t.rcov = false
-    t.spec_opts = ['-cfs']
-  end
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
- 
-task :default => [:spec]
+
+require 'spec/rake/spectask'
+Spec::Rake::SpecTask.new(:spec) do |spec|
+  spec.libs << 'lib' << 'spec'
+  spec.spec_files = FileList['spec/**/*_spec.rb']
+end
+
+Spec::Rake::SpecTask.new(:rcov) do |spec|
+  spec.libs << 'lib' << 'spec'
+  spec.pattern = 'spec/**/*_spec.rb'
+  spec.rcov = true
+end
+
+task :spec => :check_dependencies
+
+task :default => :spec
+
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rdoc|
+  if File.exist?('VERSION')
+    version = File.read('VERSION')
+  else
+    version = ""
+  end
+
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "foo #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+end

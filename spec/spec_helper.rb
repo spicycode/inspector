@@ -1,8 +1,10 @@
-require 'rubygems'
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
-gem 'rspec', '>= 1.1.4'
+require 'inspector'
 require 'spec'
-gem 'ruby2ruby'
-require 'ruby2ruby'
+require 'spec/autorun'
 
-require File.join(File.dirname(__FILE__), '..', 'inspector')
+Spec::Runner.configure do |config|
+  
+end
