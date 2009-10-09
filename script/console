@@ -1,6 +1,0 @@
-#! /usr/bin/env ruby
-require "irb"
-require File.join(File.dirname(__FILE__), '..', 'inspector')
-
-IRB.start(__FILE__)
-
