@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Inspector</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../css/reset.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" />
+    <script src="../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../js/main.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>     
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span> 
+            Inspector 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../files/lib/inspector_rb.html">lib/inspector.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    
+
+    
+
+    
+    
+
+    
+    
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+    
+        <dt>#</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000000">_collect_events_for_method_call</a>,</li>
+                
+                <li><a href="#M000001">_trace_the_method_call</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>W</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000002">where_is_this_defined</a></li>
+                
+            </ul>
+        </dd>
+    
+    </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+            <div class="sectiontitle">Class Public methods</div>
+            
+            <div class="method">
+                <div class="title" id="M000000">
+                    
+                    <a name="M000000"></a><b>_collect_events_for_method_call</b>(&amp;block)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000000_source')" id="l_M000000_source">show</a>
+                        
+                        | <a href="http://github.com/spicycode/inspector/blob/53a9207d8be6dfdc1b04b6fbfe45eba57799a335/lib/inspector.rb#L3" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000000_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/inspector.rb, line 3</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">_collect_events_for_method_call</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-identifier">events</span> = []
+    
+    <span class="ruby-identifier">set_trace_func</span> <span class="ruby-identifier">lambda</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">event</span>, <span class="ruby-identifier">file</span>, <span class="ruby-identifier">line</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">binding</span>, <span class="ruby-identifier">classname</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">events</span> <span class="ruby-operator">&lt;&lt;</span> { <span class="ruby-identifier">:event</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">event</span>, <span class="ruby-identifier">:file</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">file</span>, <span class="ruby-identifier">:line</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">line</span>, <span class="ruby-identifier">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">id</span>, <span class="ruby-identifier">:binding</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">binding</span>, <span class="ruby-identifier">:classname</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">classname</span> }
+    }
+    
+    <span class="ruby-keyword kw">begin</span>
+      <span class="ruby-keyword kw">yield</span>
+    <span class="ruby-keyword kw">ensure</span>
+      <span class="ruby-identifier">set_trace_func</span>(<span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">events</span>
+  <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000001">
+                    
+                    <a name="M000001"></a><b>_trace_the_method_call</b>(&amp;block)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000001_source')" id="l_M000001_source">show</a>
+                        
+                        | <a href="http://github.com/spicycode/inspector/blob/53a9207d8be6dfdc1b04b6fbfe45eba57799a335/lib/inspector.rb#L19" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000001_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/inspector.rb, line 19</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">_trace_the_method_call</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-identifier">events</span> = <span class="ruby-identifier">_collect_events_for_method_call</span> <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
+    
+    <span class="ruby-comment cmt"># events.reject! { |event| !%w{call c-call return}.include?(event[:event]) }</span>
+    <span class="ruby-identifier">valid_event_types</span> = [<span class="ruby-value str">'call'</span>, <span class="ruby-value str">'c-call'</span>, <span class="ruby-value str">'return'</span>]
+    
+    <span class="ruby-identifier">events</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">valid_event_types</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">event</span>[<span class="ruby-identifier">:event</span>])
+      
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">event</span>[<span class="ruby-identifier">:classname</span>].<span class="ruby-identifier">to_s</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'ActiveRecord::Base'</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">events</span>[<span class="ruby-value">-3</span>]
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">event</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">event</span>[<span class="ruby-identifier">:event</span>].<span class="ruby-identifier">include?</span>(<span class="ruby-value str">'call'</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000002">
+                    
+                    <a name="M000002"></a><b>where_is_this_defined</b>(&amp;block)
+                    
+                </div>
+                
+                <div class="description">
+                  <p>
+Original version from <a
+href="http://holgerkohnen.blogspot.com/">holgerkohnen.blogspot.com/</a>
+which { some_object.some_method() } => <file>:<line>:
+</p>
+
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000002_source')" id="l_M000002_source">show</a>
+                        
+                        | <a href="http://github.com/spicycode/inspector/blob/53a9207d8be6dfdc1b04b6fbfe45eba57799a335/lib/inspector.rb#L40" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000002_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/inspector.rb, line 40</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">where_is_this_defined</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-identifier">trace</span> = <span class="ruby-identifier">_trace_the_method_call</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;Unable to determine where the method was defined&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">trace</span>
+
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">trace</span>[<span class="ruby-identifier">:event</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">'c-call'</span>
+      <span class="ruby-node">&quot;#{trace[:classname]} method :#{trace[:id]} defined in STDLIB&quot;</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-node">&quot;#{trace[:classname]} method :#{trace[:id]} defined in #{trace[:file]}:#{trace[:line]}&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+</div>
+    </div>
+  </body>
+</html>    
