@@ -29,7 +29,7 @@ Spec::Rake::SpecTask.new(:rcov) do |spec|
   spec.rcov = true
 end
 
-task :release => 'gemcutter:release'
+task :release => ['gemcutter:release', 'pages']
 task :default => [:check_dependencies, :spec]
 
 begin
