@@ -8,7 +8,6 @@ begin
   require 'rubygems'
   require 'rake/gempackagetask'
   require 'rake/testtask'
-  require 'rake/rdoctask'
   require 'spec/rake/spectask'
 rescue Exception
   nil
@@ -21,17 +20,6 @@ PKG_FILES = FileList['[A-Z]*',
 'lib/**/*.rb',
 'doc/**/*'
 ]
- 
-desc 'Generate documentation'
-rd = Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'html'
-  rdoc.template = 'doc/jamis.rb'
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'The Inspector'
-  rdoc.options << '--line-numbers' << '--inline-source' <<  '--main' << 'README.textile' << '--title' << 'The Inspector'
-  rdoc.rdoc_files.include('README.textile', 'MIT-LICENSE', 'TODO', 'CHANGELOG')
-  rdoc.rdoc_files.include('lib/**/*.rb', 'doc/**/*.rdoc')
-end
  
 if !defined?(Spec)
   puts "spec and cruise targets require RSpec"

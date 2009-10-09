@@ -1,11 +1,6 @@
-require 'fileutils'
-require 'rubygems'
-require 'ruby2ruby'
-
 class Inspector
 
   def self._collect_events_for_method_call(&block)
-  
     events = []
     
     set_trace_func lambda { |event, file, line, id, binding, classname|
@@ -43,54 +38,14 @@ class Inspector
 # Original version from http://holgerkohnen.blogspot.com/
 # which { some_object.some_method() } => <file>:<line>:
   def self.where_is_this_defined(&block)
-    event = _trace_the_method_call(&block)
+    trace = _trace_the_method_call(&block)
+    return "Unable to determine where the method was defined" unless trace
 
-    if event
-      # TODO: If the file is (irb) or event[:event] is c-call note it differently in the output
-      "#{event[:classname]} received message '#{event[:id]}', Line \##{event[:line]} of #{(event[:event] == 'c-call') ? 'the Ruby Standard Library' : event[:file]}"
+    if trace[:event] == 'c-call'
+      "#{trace[:classname]} method :#{trace[:id]} defined in STDLIB"
     else
-      "Unable to determine where the method was defined"
+      "#{trace[:classname]} method :#{trace[:id]} defined in #{trace[:file]}:#{trace[:line]}"
     end
-  end
-
-  def self.how_is_this_defined(&block)
-    begin
-      event = _trace_the_method_call(&block)
-
-      if event
-        ::RubyToRuby.translate(event[:classname], event[:id])
-      else
-        "Unable to determine where the method was defined in order to get to it's source"
-      end
-    rescue RuntimeError => rte
-      # Assuming class level method
-      return ::RubyToRuby.translate(event[:classname], "self.#{event[:id]}")
-    rescue NoMethodError => nme
-      if nme.message =~ /^undefined method \`(.*)\' for nil\:NilClass/
-        return "Unable to get the source for #{event[:classname]}.#{event[:id]} because it is a function defined in C"
-      end 
-      raise
-    rescue Exception => ex
-      if event[:classname].to_s == 'ActiveRecord::Base'
-        return "Sorry, Ruby2Ruby can't peek under the hood in ActiveRecord::Base (modules + classes == fail in ruby2ruby)"
-      end
-      raise
-    end
-  end
-  
-  def self.who_defined_it(&block)
-    event = _trace_the_method_call(&block)
-  
-    
-    # git log -S'def self.where_is_this_defined' --pretty=format:%an
-  end
-  
-  def self.detector(&block)
-    where = where_is_this_defined(&block)
-    how = how_is_this_defined(&block)
-    
-    "Sir, here are the details of your inquiry:\n\nThe method in question was found to be defined in:\n#{where}\n\nAlso, it was found to look like the following on the inside:\n#{how}\n\n"
   end
 
 end
-
