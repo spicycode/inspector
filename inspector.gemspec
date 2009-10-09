@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{inspector}
-  s.version = "1.0.0"
+  s.version = "1.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Chad Humphries"]
@@ -13,22 +13,18 @@ Gem::Specification.new do |s|
   s.description = %q{If you have method, yo I'll find it.}
   s.email = %q{chad.humphries@gmail.com}
   s.extra_rdoc_files = [
-    "README.textile"
+    "LICENSE",
+     "README.md"
   ]
   s.files = [
     ".gitignore",
-     "CHANGELOG",
-     "MIT-LICENSE",
-     "README.textile",
+     "LICENSE",
+     "README.md",
      "Rakefile",
      "TODO",
      "VERSION",
-     "doc/jamis.rb",
      "inspector.gemspec",
-     "inspector.rb",
      "lib/inspector.rb",
-     "lib/version.rb",
-     "script/console",
      "spec/crazy_example_object.rb",
      "spec/inspector_spec.rb",
      "spec/spec.opts",
