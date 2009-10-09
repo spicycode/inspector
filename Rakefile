@@ -11,8 +11,6 @@ begin
     gem.homepage = "http://github.com/spicycode/inspector"
     gem.authors = ["Chad Humphries"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
-    gem.add_development_dependency "sdoc", ">= 0.2.14"
-    gem.add_development_dependency "sdoc-helpers", ">= 0.1.2"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
@@ -35,6 +33,14 @@ task :spec => :check_dependencies
 
 task :default => :spec
 
+begin
+  %w{sdoc sdoc-helpers rdiscount}.each { |name| gem name }
+  require 'sdoc_helpers'
+rescue LoadError => ex
+  puts "sdoc support not enabled:"
+  puts ex.inspect
+end
+
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
   if File.exist?('VERSION')
@@ -44,7 +50,7 @@ Rake::RDocTask.new do |rdoc|
   end
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "foo #{version}"
+  rdoc.title = "inspector #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
